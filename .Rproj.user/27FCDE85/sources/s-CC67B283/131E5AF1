@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1529085330190.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "226311954",
+    "id" : "131E5AF1",
+    "lastKnownWriteTime" : 1529085334,
+    "last_content_update" : 1529085334069,
+    "path" : "D:/GitHub/testest/test01.R",
+    "project_path" : "test01.R",
+    "properties" : {
+        "cursorPosition" : "22,53",
+        "scrollLine" : "5",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
