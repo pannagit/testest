@@ -21,3 +21,18 @@ id_check = id_check[which(!is.na(id_check$axioma_id)),]
 agg_check = df_agg %>% dplyr::group_by(date) %>% 
   dplyr::summarise(totWT_ben=sum(benchwts,na.rm=T), 
                    totWT_port = sum(portwt, na.rm=T))
+
+
+
+
+
+calculating returns..?
+d3 = d2 %>% dplyr::mutate(ret_prct = c(NA,Price[-1]/Price[-n()]-1),
+                       ret_prct=ifelse(date_diff<=33&date_diff>=26, ret_prct,NA),
+                       ret_log=c(NA, log(Price[-1]/Price[-n()])),
+                       ret_log=ifelse(date_diff<=33&date_diff>=26, ret_log,NA)) %>%
+  merge(group,by="Factset_ID", all.x = T, all.y = F) %>%
+  dplyr::group_by(group,Date) %>%
+  dplyr::mutate(grouptotalwt =sum(wt) %>%
+                  dplyr::arrange(group,Date)
+  
