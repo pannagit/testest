@@ -1,0 +1,905 @@
+
+  wb <- NULL
+  wb <- createWorkbook()  
+  print(paste0(f2name,"-",endDate,".RData"))
+
+    addWorksheet(wb, "General")
+    if (9.1>0) {
+      nmerge <- ncol(infoTab)
+      addStyle(wb, "General", createStyle(fgFill="#CFE8CA",fontSize=17,halign="center",valign="center",textDecoration="bold"),
+               cols=1:(16+nmerge), rows=1, stack=TRUE)
+      mergeCells(wb, "General", cols=1:(16+nmerge), rows=1)
+      writeData(wb, "General", as.data.frame(f1name), startCol=1, startRow=1, colNames=FALSE, rowNames=FALSE)
+      dimtab1 <- max(dim(mret_nres_xtab)[1]+3,14)
+      for (kt in 3:(dim(mret_nres_xtab)[1]+3)) {
+        if (kt==3) {
+          addStyle(wb, "General", createStyle(border="Bottom",borderStyle="medium",halign="center",valign="center",textDecoration="bold"),cols=2:14, rows=kt, stack=TRUE)
+        } else {
+          addStyle(wb, "General", createStyle(fontSize=10,border="TopBottomLeftRight",borderStyle="thin",fgFill="#CFE8CA",halign="center",valign="center",numFmt="PERCENTAGE"),cols=2:14, rows=kt, stack=TRUE)
+        }
+      }
+      if (endnonCol[1]!=0) {
+        for (kt in 3:(endnonCol[2]-1)) {
+          addStyle(wb, "General", createStyle(fgFill="#FFFFFF"),cols=2:13, rows=kt+1, stack=TRUE)
+        }
+        if (endnonCol[3]>1) {
+          addStyle(wb, "General", createStyle(fgFill="#FFFFFF"),cols=2:endnonCol[3], rows=endnonCol[2]+1, stack=TRUE)
+        }
+      }
+      addStyle(wb, "General", createStyle(border="LeftRight",borderStyle="medium",fgFill="#FFE9A3",halign="center",
+                                          valign="center",numFmt="PERCENTAGE"),
+               cols=14, rows=4:(dim(mret_nres_xtab)[1]+3), stack=TRUE)
+      addStyle(wb, "General", createStyle(border="Right",borderStyle="medium",halign="right",valign="center",
+                                          textDecoration="bold"),cols=1, rows=4:(dim(mret_nres_xtab)[1]+3), stack=TRUE)
+      setColWidths(wb, "General", cols=1, widths=5.55) 
+      addStyle(wb, "General", createStyle(border="Bottom",borderStyle="medium"),cols=2:14, rows=(dim(mret_nres_xtab)[1]+3), stack=TRUE)
+      writeData(wb, "General", mret_nres_xtab, startCol=2, startRow=3, colNames=TRUE, rowNames=FALSE)
+      writeData(wb, "General", as.numeric(rownames(mret_nres_xtab)), startCol=1, startRow=4, colNames=FALSE, rowNames=FALSE)
+      addStyle(wb, "General", createStyle(fontSize=12, textDecoration="bold"), rows=2, cols=2:14, stack=TRUE)
+      # setRowHeights(wb, "General", rows=3, heights=18)
+      # writeData(wb, "General", as.data.frame(paste0("Performance Table Net Research String", tag_ret)), startRow=3, startCol=2, rowNames=FALSE, colNames=FALSE)
+      
+      addStyle(wb, "General", createStyle(border="Bottom",borderStyle="thin",halign="center",valign="center",
+                                          textDecoration="bold",fgFill="#CFE8CA"), cols=16, rows=4:14, stack=TRUE)
+      setColWidths(wb, "General", cols=15, widths=5.55) 
+      setColWidths(wb, "General", cols=16, widths=22.34)
+      setColWidths(wb, "General", cols=17:(16+nmerge), widths=16.8)
+      # setColWidths(wb, "General", cols=17, widths=9.9)
+      for (kt in 1:nmerge) {
+        addStyle(wb, "General", createStyle(numFmt="PERCENTAGE", halign="center", fontSize=10), cols=kt+16, rows=c(9:14), stack=TRUE)
+        addStyle(wb, "General", createStyle(fontSize=10,halign="center"), cols=kt+16, rows=c(4:9,14), stack=TRUE)
+        addStyle(wb, "General", createStyle(border="LeftRightBottom",borderStyle="thin",halign="center",valign="center",
+                                            textDecoration="bold"), cols=kt+16, rows=4:14, stack=TRUE)
+      }
+      addStyle(wb, "General", createStyle(border="Left",borderStyle="medium"), cols=17, rows=4:14, stack=TRUE)  
+      addStyle(wb, "General", createStyle(border="Right",borderStyle="medium"), cols=16+nmerge, rows=4:14, stack=TRUE)  
+      addStyle(wb, "General", createStyle(border="Bottom",borderStyle="medium"), cols=16:(16+nmerge), rows=3, stack=TRUE)
+      addStyle(wb, "General", createStyle(border="Bottom",borderStyle="medium"), cols=16:(16+nmerge), rows=14, stack=TRUE)
+      addStyle(wb, "General", createStyle(border="LeftRight",borderStyle="medium"), cols=16, rows=4:14, stack=TRUE)
+      writeData(wb, "General", as.data.frame(c("Structure","Invest since ","Fees","Allocation", "AUM/Capacity", 
+                                               "$ Effect of Asset Flow ", "$ Effect of Allocation ", "Net $ Effect ",
+                                               "Ave Tracking Error ", "Total Tracking Error ", "Current DD ")), 
+                startCol=16, startRow=4, colNames=FALSE, rowNames=FALSE)
+      infoTab_2 = infoTab[-c(6,12),]
+      writeData(wb, "General", as.data.frame(infoTab_2), startCol=17, startRow=4, colNames=FALSE, rowNames=FALSE)
+      writeData(wb, "General", as.data.frame(infoTab.overwrite[1:5,]), startCol=17, startRow=9, colNames=FALSE, rowNames=FALSE)
+      writeData(wb, "General", as.data.frame(infoTab.overwrite[7,]), startCol=17, startRow=14, colNames=FALSE, rowNames=FALSE)
+      # setColWidths(wb, "General", cols=17, widths=12.22)
+      #       pngTitle1 <- c(paste0(f3name," Generic : Cumulative Return & Rolling Stdevs by ", endDate, " (Research String", tag_ret,")"),
+      #                      paste0(f2name," : Drawdown & Rolling 1x/2x One Year Stdevs by ", endDate, " (Net Research String", tag_ret,")"),       
+      #                      paste0(f2name," : AUM & Allocation by ", paste0(month(endDate),"-",year(endDate))))
+      #       cnt <- 0
+      colpage1 <- c((dimtab1+8),(dimtab1+23),(dimtab1+36))-6
+      #       for (kt in colpage1) {
+      #         cnt <- cnt+1
+      #         addStyle(wb, "General", createStyle(fontSize=12, valign="top",textDecoration="bold"),cols=2:15, rows=kt, stack=TRUE)
+      #         setRowHeights(wb, "General", rows=kt, heights=18)
+      #         mergeCells(wb, "General", cols=2:14, rows=kt)
+      #         writeData(wb, "General", as.data.frame(pngTitle1[cnt]), startCol=2, startRow=kt, colNames=FALSE, rowNames=FALSE)
+      #       }
+      insertImage(wb, "General", pngName11, width=pdim2[1]+.4, height=pdim2[2], startCol=1, startRow=colpage1[1])
+      insertImage(wb, "General", pngName12, width=pdim2[1], height=pdim2[2]*2, startCol=1, startRow=colpage1[2]+3)
+      
+      writeData(wb, "General", as.data.frame(c("Cumulative Return","Roll-1mon Volatility","Roll-1yr Volatility","Roll-3yr Volatility","EMAV Volatility")), 
+                startCol=18, startRow=colpage1[1]+2, rowNames=FALSE, colNames=FALSE) 
+      writeData(wb, "General", as.data.frame(c("Daily Drawdown","Roll-1yr 1x Volatility","Roll-1yr 2x Volatility","EMAV Volatility","EMAV 2x Volatility")), 
+                startCol=18, startRow=colpage1[2]+4, rowNames=FALSE, colNames=FALSE)  
+      writeData(wb, "General", as.data.frame(c("Manager AUM","Efficient Allocation")), 
+                startCol=18, startRow=colpage1[3]+9, rowNames=FALSE, colNames=FALSE) 
+      # lab.pag1b <- c(lab.pag1[1:5], rep(NA,1,12), lab.pag1[17:21], rep(NA,1,13), lab.pag1[36:37])
+      writeData(wb, "General", as.data.frame(lab.pag1[1:22]), startCol=19, startRow=colpage1[1]+2, rowNames=FALSE, colNames=FALSE)
+      tmptxtaum <- paste0("$",lab.pag1[c((length(lab.pag1)-1):length(lab.pag1))],"M")
+      writeData(wb, "General", as.data.frame(tmptxtaum), startCol=19, startRow=colpage1[3]+9, rowNames=FALSE, colNames=FALSE)
+      #       
+      addStyle(wb, "General", createStyle(fontSize=9, halign="right", valign="top"), cols=18, rows=colpage1[1]:(colpage1[1]+40), stack=TRUE)
+      addStyle(wb, "General", createStyle(halign="center", valign="top",numFmt="PERCENTAGE",fontSize=9), cols=19, rows=colpage1[1]:(colpage1[1]+28), stack=TRUE)
+      addStyle(wb, "General", createStyle(halign="center", valign="top",numFmt="PERCENTAGE",fontSize=9), cols=19, rows=c((colpage1[1]+28):(colpage1[1]+40)), stack=TRUE)
+      
+      insertImage(wb, "General", paste0(getwd(),"/leg1.png"), width=.4, height=1, startCol=18, startRow=colpage1[1]+2)
+      insertImage(wb, "General", paste0(getwd(),"/leg2b.png"), width=.4, height=1, startCol=18, startRow=colpage1[2]+4)
+      insertImage(wb, "General", paste0(getwd(),"/leg1c.png"), width=.33, height=.38, startCol=18, startRow=colpage1[3]+9)
+      setColWidths(wb, "General", cols=18, widths=21)
+      #       # writeData(wb, "General", as.data.frame(lab.p13), startCol=16, startRow=colpage1[3]+2, rowNames=FALSE, colNames=FALSE)
+      #       
+      #       setColWidths(wb,"General",cols=18,widths=21.44)
+      #       setColWidths(wb,"General", cols=16, widths=18.44)
+      #       setColWidths(wb,"General", cols=17, widths=14)
+    }
+    print("Page-1")
+
+    addWorksheet(wb, "Analytic") 
+    print("Page-2")
+    if (9.21>0) {
+      setColWidths(wb, "Analytic", cols=1, widths=18.33) ##
+      setColWidths(wb, "Analytic", cols=c(8,11), widths=4.2)
+      setColWidths(wb, "Analytic", cols=c(2:7,9:10,12:13), widths=9.44)
+      for (ktc in c(7,10,13)) { addStyle(wb,"Analytic",createStyle(fgFill="#CBC9C9"),cols=ktc, rows=c(4:8,10:13,15:18,20:23),stack=TRUE) }
+      addStyle(wb, "Analytic", createStyle(fontSize=12.5, halign="center", valign="center",textDecoration="bold"),cols=1:11, rows=1, stack=TRUE)
+      mergeCells(wb, "Analytic", cols=1:11, rows=1)
+      writeData(wb, "Analytic", as.data.frame("Analytic & Ranking"), startCol=1, startRow=1, colNames=FALSE, rowNames=FALSE)
+      addStyle(wb, "Analytic", createStyle(halign="center", valign="center",textDecoration="bold"),cols=1:13, rows=2, stack=TRUE)
+      addStyle(wb, "Analytic", createStyle(halign="center", valign="center",textDecoration="bold"),cols=1:13, rows=3, stack=TRUE)
+      mergeCells(wb, "Analytic", cols=1:4, rows=2)
+      writeData(wb, "Analytic", as.data.frame(paste0("Ratios based on daily data thru ", repDates[1])), 
+                startCol=1, startRow=2, colNames=FALSE, rowNames=FALSE)
+      mergeCells(wb, "Analytic", cols=6:13, rows=2)
+      writeData(wb, "Analytic", as.data.frame(paste0("Rankings based on monthly data thru ", repDates[2])), 
+                startCol=6, startRow=2, colNames=FALSE, rowNames=FALSE)
+      colnum3 <- c(2,3,4,6,7,9,10,12,13)
+      for (kt in 1:9) {
+        addStyle(wb, "Analytic", createStyle(fontSize=10, numFmt="0.00", halign="center", valign="center"),
+                 cols=colnum3[kt], rows=4:23, stack=TRUE)
+      }
+      addStyle(wb, "Analytic", createStyle(fgFill="#FFE9A3"), cols=2, rows= c(4:8,10:13,15:18,20:23), stack=TRUE)
+      addStyle(wb, "Analytic", createStyle(fgFill="#CFE8CA"), cols=3, rows= c(4:8,10:13,15:18,20:23), stack=TRUE)
+      addStyle(wb, "Analytic", createStyle(fgFill="#FCD5B4"), cols=4, rows= c(4:8,10:13,15:18,20:23), stack=TRUE)
+      # addStyle(wb, "Analytic", createStyle(fgFill="#F2F2F2"), cols=6, rows= c(4:8,10:13,15:18,20:23), stack=TRUE)
+      # addStyle(wb, "Analytic", createStyle(fgFill="#F2F2F2"), cols=9, rows= c(4:8,10:13,15:18,20:23), stack=TRUE)
+      # addStyle(wb, "Analytic", createStyle(fgFill="#F2F2F2"), cols=12, rows= c(4:8,10:13,15:18,20:23), stack=TRUE)
+      rownum32 <- c(4:8,15,20:23)
+      for (kt in 1:length(rownum32)) {
+        addStyle(wb, "Analytic", createStyle(fontSize=10, numFmt="PERCENTAGE"), cols=1:13, rows=rownum32[kt], stack=TRUE)
+      }
+      addStyle(wb, "Analytic", createStyle(fontSize=10, numFmt="PERCENTAGE"), cols=7, rows=4:23, stack=TRUE)
+      addStyle(wb, "Analytic", createStyle(fontSize=10, numFmt="PERCENTAGE"), cols=10, rows=4:23, stack=TRUE)
+      addStyle(wb, "Analytic", createStyle(fontSize=10, numFmt="PERCENTAGE"), cols=13, rows=4:23, stack=TRUE)
+      addStyle(wb, "Analytic", createStyle(halign="right", textDecoration="bold"), cols=1, rows=4:23, stack=TRUE)
+      
+      writeData(wb, "Analytic", as.data.frame(t(c("One Year","Rank 1-yr",NA,"Three Year","Rank 3-yr",NA,"Five Year", "Rank 5-yr"))), 
+                startCol=6, startRow=3, colNames=FALSE, rowNames=FALSE)
+      writeData(wb, "Analytic", anaTab, startCol=1, startRow=3, colNames=TRUE, rowNames=TRUE)
+      writeData(wb, "Analytic", rankTab, startCol=6, startRow=4, colNames=FALSE, rowNames=FALSE)
+      for (kt in 1:3) {
+        addStyle(wb, "Analytic", createStyle(fgFill="#FF6B6B"), cols=(3*kt+4), rows=acol[[1]][,kt], stack=TRUE)
+        addStyle(wb, "Analytic", createStyle(fgFill="#F79170"), cols=(3*kt+4), rows=acol[[2]][,kt], stack=TRUE)
+        addStyle(wb, "Analytic", createStyle(fgFill="#CBC9C9"), cols=(3*kt+4), rows=acol[[3]][,kt], stack=TRUE)
+        addStyle(wb, "Analytic", createStyle(fgFill="#91CD9F"), cols=(3*kt+4), rows=acol[[4]][,kt], stack=TRUE)
+        addStyle(wb, "Analytic", createStyle(fgFill="#76C47F"), cols=(3*kt+4), rows=acol[[5]][,kt], stack=TRUE)
+      }
+      # for (ktc in c(7,10,13)) { writeData(wb,"Analytic", data.frame("-"),colNames=FALSE,startCol=ktc,startRow=6)}
+      # addStyle(wb, "Analytic", createStyle(fgFill="#CBC9C9",halign="center"),cols=c(7,10,13),rows=6,stack=TRUE)
+    } # format & output Analytic&Ranking Table
+    if (9.22>0) {
+      addStyle(wb, "Analytic", createStyle(fontSize=12.5, halign="center", valign="center",textDecoration="bold"),cols=1:11, rows=25, stack=TRUE)
+      mergeCells(wb, "Analytic", cols=1:11, rows=25)
+      writeData(wb, "Analytic", as.data.frame(paste0("Expectations as of ", repDates[1])), startCol=1, startRow=25, colNames=FALSE, rowNames=FALSE)
+      for (kt in c(27,29,30,32:36)) {
+        if (is.element(kt,c(27,29,32))) {
+          addStyle(wb, "Analytic", createStyle(valign="center",halign="center", textDecoration="bold"),cols=3:5, rows=kt, stack=TRUE)
+        } else if (kt==30) {
+          addStyle(wb, "Analytic", createStyle(fontSize=10, numFmt="0.00",halign="center"), cols=3:5, rows=kt, stack=TRUE)
+        } else {
+          addStyle(wb, "Analytic", createStyle(fontSize=10, numFmt="PERCENTAGE",halign="center"), cols=3:5, rows=kt, stack=TRUE)
+        }
+        # if (is.element(kt,c(29,32))) {
+        #   # addStyle(wb, "Analytic", createStyle(fgFill="#DAEEF3"), cols=3:5, rows=kt, stack=TRUE)
+        # }
+      }
+      addStyle(wb, "Analytic", createStyle(halign="right",textDecoration="bold"),cols=2,rows=33:36,stack=TRUE)
+      mergeCells(wb, "Analytic", cols=3:5, rows=29)
+      mergeCells(wb, "Analytic", cols=3:5, rows=32)
+      for (kt in c(29,30,32,33)) {
+        addStyle(wb, "Analytic", createStyle(valign="center",halign="center", textDecoration="bold"),cols=9:10, rows=kt, stack=TRUE)
+        if (is.element(kt,c(29,32))) { # addStyle(wb, "Analytic", createStyle(fgFill="#DAEEF3"),cols=9:10,rows=kt,stack=TRUE)
+        } else {addStyle(wb, "Analytic", createStyle(fgFill="#CCC0DA"),cols=9:10,rows=kt,stack=TRUE) }
+        mergeCells(wb, "Analytic", cols=9:10, rows=kt)
+      }
+      addStyle(wb, "Analytic", createStyle(textDecoration="bold",halign="center"),cols=9:10,rows=27,stack=TRUE)
+      # addStyle(wb, "Analytic", createStyle(textDecoration="bold",halign="center", fgFill="#DAEEF3"),cols=9:10, rows=27, stack=TRUE)
+      # addStyle(wb, "Analytic", createStyle(textDecoration="bold",halign="center", fgFill="#DAEEF3"),cols=9:10, rows=35, stack=TRUE)
+      addStyle(wb, "Analytic", createStyle(textDecoration="bold",halign="center", fgFill="#CCC0DA"),cols=9:10, rows=36, stack=TRUE)
+      mergeCells(wb, "Analytic", cols=9:10, rows=27)
+      mergeCells(wb, "Analytic", cols=9:10, rows=35)
+      mergeCells(wb, "Analytic", cols=9:10, rows=36)
+      addStyle(wb, "Analytic", createStyle(fgFill="#FFE9A3"), cols=3, rows=c(30,33:36), stack=TRUE)
+      addStyle(wb, "Analytic", createStyle(fgFill="#CCC0DA"), cols=4, rows=c(30,33:36), stack=TRUE)
+      addStyle(wb, "Analytic", createStyle(fgFill="#FFFF7D"), cols=5, rows=c(30,33:36), stack=TRUE)
+      writeData(wb, "Analytic", expTab1, startCol=3, startRow=30, colNames=FALSE, rowNames=FALSE)
+      writeData(wb, "Analytic", expTab2, startCol=9, startRow=27, colNames=FALSE, rowNames=FALSE)
+      writeData(wb, "Analytic", as.data.frame(t(c("At Invst","Expect","Current"))),startCol=3,startRow=27,colNames=FALSE,rowNames=FALSE)
+      writeData(wb, "Analytic", as.data.frame(c("5-yr Info Ratio")),startCol=3,startRow=29,colNames=FALSE,rowNames=FALSE)
+      writeData(wb, "Analytic", as.data.frame(c("Mean Return")),startCol=3,startRow=32,colNames=FALSE,rowNames=FALSE)
+      writeData(wb, "Analytic", as.data.frame(c("Daily","Monthly","Quarterly","LTD")),startCol=2,startRow=33,colNames=FALSE,rowNames=FALSE)
+    } # Expectation Table
+    if (9.23>0) {
+      addStyle(wb, "Analytic", createStyle(fontSize=12.5, halign="center", valign="center",textDecoration="bold"),cols=1:11, rows=39, stack=TRUE)
+      mergeCells(wb, "Analytic", cols=1:11, rows=39)
+      writeData(wb, "Analytic", as.data.frame(paste0("Thresholds as of ",repDates[1])), startCol=1, startRow=39, colNames=FALSE, rowNames=FALSE)
+      for (ktc in c(40,42:69)) {
+        mergeCells(wb, "Analytic", cols=7:8,rows=ktc)
+        mergeCells(wb, "Analytic", cols=10:11,rows=ktc)
+      }
+      ThresholdsTab1b = cbind(ThresholdsTab1[,1:6],data.frame(fill=matrix(nrow=nrow(ThresholdsTab1),ncol=1)),ThresholdsTab1[7:8])
+      ThresholdsTab2b = cbind(ThresholdsTab2[,1:6],data.frame(fill=matrix(nrow=nrow(ThresholdsTab2),ncol=1)),ThresholdsTab2[7:8])
+      writeData(wb,"Analytic",ThresholdsTab1b, startCol=2, startRow=42, colNames=FALSE)
+      writeData(wb,"Analytic",ThresholdsTab2b, startCol=2, startRow=67, colNames=FALSE)
+      for (ktc in c(2:6,9)) {
+        addStyle(wb,"Analytic",createStyle(numFmt="PERCENTAGE",halign="center",valign="center"),cols=ktc,rows=42:61,stack=TRUE)
+        addStyle(wb,"Analytic",createStyle(numFmt="0.00",halign="center",valign="center"),cols=ktc,rows=63:65,stack=TRUE)
+        addStyle(wb,"Analytic",createStyle(halign="center",valign="center"),cols=ktc,rows=67:69,stack=TRUE)
+      }
+      for (ktc in c(7,8,10,11)) {addStyle(wb,"Analytic",createStyle(halign="center",valign="center"),cols=ktc,rows=42:69, stack=TRUE)}
+      for (ktc in 6:8) {addStyle(wb,"Analytic",createStyle(fgFill="#CFE8CA"),cols=ktc,rows=c(42:47,49:51,53:55,57:59,61,63:65,67:69),stack=TRUE)}
+      for (ktc in 9:11) {addStyle(wb,"Analytic",createStyle(fgFill="#92CB87"),cols=ktc,rows=c(42:47,49:51,53:55,57:59,61,63:65,67:69),stack=TRUE)}
+      threCols =c("#E0E0E0","#FFE9A3","#CCC0DA","#FFFF7D")
+      for (ktc in 2:5) {addStyle(wb,"Analytic",createStyle(fgFill=threCols[ktc-1]),cols=ktc,rows=c(42:47,49:51,53:55,57:59,61,63:65,67:69),stack=TRUE)}
+      threColNames = data.frame(t(Thre.colname)) 
+      threColNames = cbind(threColNames[,1:6],NA,threColNames[,7:8])
+      writeData(wb, "Analytic", threColNames,startCol=2,startRow=40,colNames=FALSE,rowNames=FALSE)
+      addStyle(wb,"Analytic",createStyle(textDecoration="bold",halign="center"),cols=2:11,rows=40,stack=TRUE)
+      writeData(wb, "Analytic", data.frame(Thre.rowname),startCol=1,startRow=42,colNames=FALSE,rowNames=FALSE)
+      addStyle(wb,"Analytic",createStyle(textDecoration="bold",halign="right"),cols=1,rows=42:69,stack=TRUE)
+      speWarnNCol = c(5,6,9)
+      for (ktc in 1:3) {
+        if (length(which(!is.na(warnCol[,ktc])))>0) {  addStyle(wb,"Analytic",createStyle(fgFill="#FF6B6B"),
+                                    cols=speWarnNCol[ktc],rows=which(!is.na(warnCol[,ktc]))+41,stack=TRUE)}
+      }
+    } # end Threshold table
+    
+    addWorksheet(wb, "vs Bench")
+    print("Page-3")
+    if (9.3>0) {
+      lab1b <- c(lab1[1:3],rep(NA,1,11), lab1[14:16], rep(NA,1,11),lab1[27:29])
+      lab2b <- c(lab2[1:3],rep(NA,1,11), lab2[14:16], rep(NA,1,11),lab2[27:29])
+      # setRowHeights(wb,"vs Bench", rows=titRows, heights=18)
+      writeData(wb, "vs Bench", as.data.frame(lab1b), startRow=19, startCol=16, rowNames=FALSE, colNames=FALSE)
+      writeData(wb, "vs Bench", as.data.frame(lab2b), startRow=19, startCol=17, rowNames=FALSE, colNames=FALSE)
+      #       for (kt in titRows) {
+      #         mergeCells(wb, "vs Bench", cols=2:13, rows=kt)
+      #         addStyle(wb, "vs Bench", createStyle(fontSize=11.5, textDecoration="bold", valign="top"),rows=kt, cols=2, stack=TRUE)
+      #       }
+      addStyle(wb, "vs Bench", createStyle(fontSize=9, numFmt="PERCENTAGE", halign="left"), rows=17:25, cols=17, stack=TRUE)
+      addStyle(wb, "vs Bench", createStyle(fontSize=9, numFmt="0.00", halign="left"), rows=31:50, cols=17, stack=TRUE)
+      addStyle(wb, "vs Bench", createStyle(fontSize=9), rows=2:49, cols=16, stack=TRUE)
+      
+      for (kt in which(is.na(lab2[1:3]))) {
+        writeData(wb, "vs Bench", as.data.frame(as.character("NA")), startRow=kt+18, startCol=17, rowNames=FALSE, colNames=FALSE)
+      }
+      for (kt in which(is.na(lab2[14:16]))) {
+        writeData(wb, "vs Bench", as.data.frame(as.character("NA")), startRow=kt+32, startCol=17, rowNames=FALSE, colNames=FALSE)
+      }
+      for (kt in which(is.na(lab2[27:29]))) {
+        writeData(wb, "vs Bench", as.data.frame(as.character("NA")), startRow=kt+46, startCol=17, rowNames=FALSE, colNames=FALSE)
+      }
+      insertImage(wb, "vs Bench", pngName3,width=d93[1], height=d93[2], startRow=1, startCol=1, dpi=300)
+      insertImage(wb, "vs Bench", paste0(getwd(),"/leg2.png"), width=.6, height=.6, startRow=19, startCol=15, dpi=300)
+      insertImage(wb, "vs Bench", paste0(getwd(),"/leg2.png"), width=.6, height=.6, startRow=33, startCol=15, dpi=300)
+      insertImage(wb, "vs Bench", paste0(getwd(),"/leg2.png"), width=.6, height=.6, startRow=47, startCol=15, dpi=300)
+      setColWidths(wb, "vs Bench", cols=14, widths=4)
+    }
+ 
+    addWorksheet(wb, "stdevs")
+    print("Page-4")
+    if (9.41>0) {
+      setColWidths(wb, "stdevs", cols=c(1,11), widths=3.6)
+      pageSetup(wb, "stdevs", orientation="landscape")
+      insertImage(wb, "stdevs", pngName21a, width=pdim3[1], height=pdim3[2], startRow=2, startCol=2)
+      insertImage(wb, "stdevs", pngName21b, width=pdim3[1], height=pdim3[2], startRow=2, startCol=12)
+      addStyle(wb, "stdevs", createStyle(fontSize=11.5, textDecoration="bold", valign="center", halign="center"), cols=1:20, rows=1)
+      writeData(wb, "stdevs", as.data.frame(stdTitle[1]),startCol=2, startRow=1, colNames=FALSE, rowNames=FALSE)
+      setRowHeights(wb, "stdevs", rows=1, heights=18)
+      mergeCells(wb, "stdevs", cols=2:20, rows=1)
+    }
+
+    print("Page-5")
+    if ((9.42>0)&(netAlt)){
+      addWorksheet(wb, "stdevs contd")
+      setColWidths(wb, "stdevs contd", cols=c(1,11), widths=3.6)
+      pageSetup(wb, "stdevs contd", orientation="landscape")
+      insertImage(wb, "stdevs contd", pngName22a, width=pdim3[1], height=pdim3[2], startRow=2, startCol=2)
+      insertImage(wb, "stdevs contd", pngName22b, width=pdim3[1], height=pdim3[2], startRow=2, startCol=12)
+      addStyle(wb, "stdevs contd", createStyle(fontSize=11.5, textDecoration="bold", valign="center", halign="center"), cols=1:20, rows=1)
+      writeData(wb, "stdevs contd", as.data.frame(stdTitle[2]), startCol=2, startRow=1, colNames=FALSE, rowNames=FALSE)
+      setRowHeights(wb, "stdevs contd", rows=1, heights=18)
+      mergeCells(wb, "stdevs contd", cols=2:20, rows=1)
+    }
+ 
+    addWorksheet(wb, "attr")
+    print("Page-6")
+    if (9.43>0) { insertImage(wb, "attr", pngName3a, width=12, height=8) }
+
+    addWorksheet(wb, "vs idx")
+    print("Page-7")
+    if (9.51>0) {
+        # edit page title & chart title
+        addStyle(wb, "vs idx", createStyle(fontSize=12.5, halign="center", valign="center",textDecoration="bold"),cols=1:19, rows=1, stack=TRUE)
+        mergeCells(wb, "vs idx", cols=1:19, rows=1)
+        writeData(wb, "vs idx", as.data.frame(peertab.title), startCol=1, startRow=1, colNames=FALSE, rowNames=FALSE)
+        setColWidths(wb,"vs idx",cols=1,widths=13)
+        setRowHeights(wb,"vs idx",rows=2,heights=4)
+        mergeCells(wb, "vs idx", cols=8:13, rows=3)
+        mergeCells(wb, "vs idx", cols=14:19, rows=3)
+        addStyle(wb, "vs idx", createStyle(fontSize=11.5, halign="center", valign="center",textDecoration="bold"),cols=8:19, rows=3, stack=TRUE)
+        # plug in tables
+        writeData(wb, "vs idx", pps[[1]][,-7], startCol=2, startRow=6, colNames=FALSE, rowNames=FALSE)
+        # style table contents & inner border
+        for (vsi in c(2,4:7)) {addStyle(wb,"vs idx",createStyle(numFmt="PERCENTAGE",fgFill="#DAEEF3",halign="center",
+                                                                border="TopBottomLeftRight",borderStyle="thin"),cols=vsi,rows=c(6:9,13:16,20:23,27:30),stack=TRUE)}
+        addStyle(wb,"vs idx",createStyle(numFmt="0.00",fgFill="#DAEEF3",halign="center",
+                                         border="TopBottomLeftRight",borderStyle="thin"),cols=3,rows=c(6:9,13:16,20:23,27:30),stack=TRUE)
+        # outside border
+        for (vsi in c(5,9,12,16,19,23,26,30)) {addStyle(wb,"vs idx",createStyle(border="Bottom",borderStyle="medium"),cols=2:7,rows=vsi,stack=TRUE)}
+        for (vsi in c(1,7)) {addStyle(wb,"vs idx",createStyle(border="Right",borderStyle="medium"),cols=vsi,rows=c(6:9,13:16,20:23,27:30),stack=TRUE)}
+        # edit table title
+        writeData(wb, "vs idx", as.data.frame(paste0("VAMI: ",f2name)), startCol=8, startRow=3, colNames=FALSE, rowNames=FALSE)
+        writeData(wb, "vs idx", as.data.frame(paste0("VAMI: ",f2name," Adj. to 12% Vol")), startCol=14, startRow=3, colNames=FALSE, rowNames=FALSE)
+        for (vsi in c(4,11,18,25)) {
+          addStyle(wb, "vs idx", createStyle(fontSize=11.5, halign="center", valign="center",textDecoration="bold"),cols=1:7, rows=vsi, stack=TRUE)
+          mergeCells(wb, "vs idx", cols=1:7, rows=vsi)
+          writeData(wb, "vs idx", as.data.frame(peerTag[(vsi+3)/7]), startCol=1, startRow=vsi, colNames=FALSE)
+          addStyle(wb, "vs idx", createStyle(fontSize=11.5, halign="center", valign="center",textDecoration="bold"),cols=1:7, rows=vsi+1, stack=TRUE)
+          writeData(wb,"vs idx", data.frame(t(colnames(pps[[1]])[-7])), startCol=2, startRow=vsi+1,colNames=FALSE)
+        }
+        idxCol = c("#69B659","#D2B583","#EFA755","#785A49")
+        for (vsi in 6:9) { addStyle(wb,"vs idx",createStyle(fontColour=idxCol[vsi-5],halign="right",textDecoration="bold"),cols=1,rows=seq(vsi,21+vsi,7),stack=TRUE)}
+        for (vsi in 1:4) {
+          writeData(wb,"vs idx",data.frame(rownames(pps[[1]])[1:4]),startCol=1,startRow=7*vsi-1,colNames=FALSE)
+          writeData(wb,"vs idx",data.frame("-"),startCol=2,startRow=7*vsi-1,colNames=FALSE)
+          addStyle(wb,"vs idx",createStyle(fgFill="#FFFFFF"),cols=2,rows=7*vsi-1,stack=TRUE)
+        }
+        
+        insertImage(wb, "vs idx", pngName41, width=p41bwidx, height=p41bhidx, startRow=4, startCol=8)
+        insertImage(wb, "vs idx", pngName42, width=p42bwidx, height=p42bhidx, startRow=33, startCol=1)
+        setRowHeights(wb,"vs idx",rows=32,heights=4)  # scale = 82
+    }
+    
+    addWorksheet(wb, "vs peer") 
+    print("Page-8")
+    if ((9.52>0)&(PeerDum==0)) {
+      # edit page title & chart title
+      addStyle(wb, "vs peer", createStyle(fontSize=12.5, halign="center", valign="center",textDecoration="bold"),cols=1:19, rows=1, stack=TRUE)
+      mergeCells(wb, "vs peer", cols=1:19, rows=1)
+      writeData(wb, "vs peer", as.data.frame(peertab2.title), startCol=1, startRow=1, colNames=FALSE, rowNames=FALSE)
+      setColWidths(wb,"vs peer",cols=1,widths=18.5)
+      setRowHeights(wb,"vs peer",rows=2,heights=4)
+      mergeCells(wb, "vs peer", cols=8:13, rows=3)
+      mergeCells(wb, "vs peer", cols=14:19, rows=3)
+      addStyle(wb, "vs peer", createStyle(fontSize=11.5, halign="center", valign="center",textDecoration="bold"),cols=8:19, rows=3, stack=TRUE)
+      # plug in tables
+      writeData(wb, "vs peer", pps2[[1]][,-7], startCol=2, startRow=6, colNames=FALSE, rowNames=FALSE)
+      # style table contents & inner border
+      peerRows = c(6:(5+peerNum),15:(14+peerNum),24:(23+peerNum),33:(32+peerNum))
+      for (vsi in c(2,4:7)) {addStyle(wb,"vs peer",createStyle(numFmt="PERCENTAGE",fgFill="#DAEEF3",halign="center",
+                                                               border="TopBottomLeftRight",borderStyle="thin"),cols=vsi,rows=peerRows,stack=TRUE)}
+      addStyle(wb,"vs peer",createStyle(numFmt="0.00",fgFill="#DAEEF3",halign="center",
+                                        border="TopBottomLeftRight",borderStyle="thin"),cols=3,rows=peerRows,stack=TRUE)
+      # outside border
+      for (vsi in c(5,(5+peerNum),14,(14+peerNum),23,(23+peerNum),32,(32+peerNum))) {
+        addStyle(wb,"vs peer",createStyle(border="Bottom",borderStyle="medium"),cols=2:7,rows=vsi,stack=TRUE)
+      }
+      for (vsi in c(1,7)) {addStyle(wb,"vs peer",createStyle(border="Right",borderStyle="medium"),cols=vsi,rows=peerRows,stack=TRUE)}
+      # edit chart title
+      writeData(wb, "vs peer", as.data.frame(paste0("VAMI: ",f2name)), startCol=8, startRow=3, colNames=FALSE, rowNames=FALSE)
+      writeData(wb, "vs peer", as.data.frame(paste0("VAMI: ",f2name,", Adj to 12% Vol")), startCol=14, startRow=3, colNames=FALSE, rowNames=FALSE)
+      # edit table title
+      for (vsi in c(4,13,22,31)) {
+        addStyle(wb, "vs peer", createStyle(fontSize=11.5, halign="center", valign="center",textDecoration="bold"),cols=1:7, rows=vsi, stack=TRUE)
+        mergeCells(wb, "vs peer", cols=1:7, rows=vsi)
+        writeData(wb, "vs peer", as.data.frame(peerTag[(vsi+3)/7]), startCol=1, startRow=vsi, colNames=FALSE)
+        addStyle(wb, "vs peer", createStyle(fontSize=11.5, halign="center", valign="center",textDecoration="bold"),cols=1:7, rows=vsi+1, stack=TRUE)
+        writeData(wb,"vs peer", data.frame(t(colnames(pps2[[1]])[-7])), startCol=2, startRow=vsi+1,colNames=FALSE)
+      }
+      peerCol <- c("#69B659","#EBE5DB", "#EFDAB6", "#E4C795", "#DEBA7B", "#EBC179","#EBB964", "#E2AC4F", "#DA9E36", "#E9A42D", "#FCB232")
+      addStyle(wb,"vs peer",createStyle(fgFill="#262626"),cols=1,rows=peerRows,stack=TRUE)
+      for (vsi in 6:11) { addStyle(wb,"vs peer",createStyle(fontColour=peerCol[vsi-5],halign="right",textDecoration="bold"),cols=1,rows=seq(vsi,27+vsi,9),stack=TRUE)}
+      for (vsi in 1:4) { 
+        writeData(wb,"vs peer",data.frame(rownames(pps2[[1]])[1:peerNum]),startCol=1,startRow=9*vsi-3,colNames=FALSE)
+        writeData(wb,"vs peer",data.frame("-"),startCol=2,startRow=9*vsi-3,colNames=FALSE)
+        addStyle(wb,"vs peer",createStyle(fgFill="#FFFFFF"),cols=2,rows=9*vsi-3,stack=TRUE)
+      }
+      insertImage(wb, "vs peer", pngName41b, width=p41bw, height=p41bh, startRow=4, startCol=8)
+      insertImage(wb, "vs peer", pngName42b, width=p42bw, height=p42bh, startRow=41, startCol=1)
+      setRowHeights(wb,"vs peer",rows=40,heights=4)  # scale = 82
+    }
+    
+    print("Page-9")
+    if ((9.70>0)&(betaDumm==1)) {
+      addWorksheet(wb, "Exotic Beta - TSM")
+      setColWidths(wb, "Exotic Beta - TSM", cols=c(1,11), widths=1)
+      setColWidths(wb, "Exotic Beta - TSM", cols=10, widths=13.11)
+      setColWidths(wb, "Exotic Beta - TSM", cols=2:9, widths=10.44)
+      setRowHeights(wb, "Exotic Beta - TSM", rows=c(1:63), heights=12.5)
+      setRowHeights(wb, "Exotic Beta - TSM", rows=c(8,18,29,39,50,60), heights=2)
+      setRowHeights(wb, "Exotic Beta - TSM", rows=c(11,21,32,42,43,53,63), heights=7.5)
+      setRowHeights(wb, "Exotic Beta - TSM", rows=c(1,22,43), heights=18.5)
+      
+      for (ktc in c(1,22,43)) mergeCells(wb, "Exotic Beta - TSM", cols=2:19, rows=ktc)
+      addStyle(wb,"Exotic Beta - TSM",createStyle(fgFill="#808080"),cols=1,rows=c(1,22,43),stack=TRUE)
+      addStyle(wb,"Exotic Beta - TSM",createStyle(halign="left",valign="center",fontColour="#FFFFFF",
+                                                  textDecoration="bold",fgFill="#808080",fontSize=12.5),cols=2,rows=c(1,22,43),stack=TRUE)
+      writeData(wb,"Exotic Beta - TSM",as.data.frame(paste0("Regressions against Time-Series Momentum by Time Frame ",regDate[1], 
+                                                            " to ", regDate[2]," (Res Str,",tag_ret,")")),startCol=2,startRow=1,colNames=FALSE)
+      writeData(wb,"Exotic Beta - TSM",as.data.frame(paste0("Regressions against 12-month Time-Series Momentum by Sectors ",regDate[1], 
+                                                            " to ", regDate[2]," (Res Str,",tag_ret,")")),startCol=2,startRow=22,colNames=FALSE)
+      writeData(wb,"Exotic Beta - TSM",as.data.frame(paste0("Regressions against Factors w TSM12M ",regDate[1], 
+                                                            " to ", regDate[2]," (Res Str,",tag_ret,")")),startCol=2,startRow=43,colNames=FALSE)
+      
+      for (ktc in 1:11) addStyle(wb, "Exotic Beta - TSM", createStyle(fgFill="#F2F2F2",halign="center"), cols=ktc, rows=c(2:21,23:42,44:63), stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(numFmt="PERCENTAGE"), cols=2:10, 
+               rows=c(2:5,10,13:15,20,24:26,31,34:36,41,45:47,52,55:57,62), gridExpand=TRUE, stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(numFmt="0.00"), cols=2:10, 
+               rows=c(6,7,9,16,17,19,27,28,30,37,38,40,48,49,51,58,59,61),gridExpand=TRUE, stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="leftrighttopbottom",borderStyle="thin"),
+               rows=c(3:5,13:15), cols=6:10, gridExpand=TRUE, stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="leftrighttopbottom",borderStyle="thin"),
+               rows=c(6,7,16,17), cols=7:9, gridExpand=TRUE, stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="leftrighttopbottom",borderStyle="thin"),
+               rows=c(24:26,34:36), cols=5:10, gridExpand=TRUE, stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="leftrighttopbottom",borderStyle="thin"),
+               rows=c(27,28,37,38), cols=6:9, gridExpand=TRUE, stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="leftrighttopbottom",borderStyle="thin"),
+               rows=c(45:47,55:57), cols=3:10, gridExpand=TRUE, stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="leftrighttopbottom",borderStyle="thin"),
+               rows=c(48,49,58,59), cols=4:9, gridExpand=TRUE, stack=TRUE)
+      
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="bottom",borderStyle="medium"),
+               rows=c(2,5,12,15), cols=6:10, gridExpand=TRUE, stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="bottom",borderStyle="medium"),
+               rows=c(23,26,33,36), cols=5:10, gridExpand=TRUE, stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="bottom",borderStyle="medium"),
+               rows=c(44,47,54,57), cols=3:10, gridExpand=TRUE, stack=TRUE)
+      
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="leftright",borderStyle="medium"),
+               rows=c(3:5,13:15), cols=c(6,10), gridExpand=TRUE, stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="leftright",borderStyle="medium"),
+               rows=c(24:26,34:36), cols=c(5,10), gridExpand=TRUE, stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="leftright",borderStyle="medium"),
+               rows=c(45:47,55:57), cols=c(3,10), gridExpand=TRUE, stack=TRUE)
+      
+      addStyle(wb, "Exotic Beta - TSM", createStyle(valign="center",border="right",borderStyle="medium", halign="right",textDecoration="bold"),
+               rows=c(3:5,9,10,13:15,19,20), cols=c(5), stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(valign="center",border="right",borderStyle="medium", halign="right",textDecoration="bold"),
+               rows=c(24:26,30,31,34:36,40,41), cols=c(4), stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(valign="center",border="right",borderStyle="medium", halign="right",textDecoration="bold"),
+               rows=c(45:47,51,52,55:57,61,62), cols=c(2),  stack=TRUE)
+      
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="right",borderStyle="medium", halign="right",textDecoration="bold"),
+               rows=c(6,7,16,17), cols=c(6), stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="right",borderStyle="medium", halign="right",textDecoration="bold"),
+               rows=c(27,28,37,38), cols=c(5), stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="right",borderStyle="medium", halign="right",textDecoration="bold"),
+               rows=c(48,49,58,59), cols=c(3), stack=TRUE)
+      
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="topright",borderStyle="medium",fgFill="#FFFFFF"),rows=c(9,19), cols=c(6), stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="topright",borderStyle="medium",fgFill="#FFFFFF"),rows=c(30,40), cols=c(5), stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="topright",borderStyle="medium",fgFill="#FFFFFF"),rows=c(51,61), cols=c(3), stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="bottom",borderStyle="thin"),rows=c(9,19), cols=c(6), stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="bottom",borderStyle="thin"),rows=c(30,40), cols=c(5), stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="bottom",borderStyle="thin"),rows=c(51,61), cols=c(3), stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="bottomright",borderStyle="medium",fgFill="#FFFFFF"),rows=c(10,20), cols=c(6), stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="bottomright",borderStyle="medium",fgFill="#FFFFFF"),rows=c(31,41), cols=c(5), stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="bottomright",borderStyle="medium",fgFill="#FFFFFF"),rows=c(52,62), cols=c(3), stack=TRUE)
+      
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="left",borderStyle="medium"),
+               rows=c(6,7,16,17,27,28,37,38,48,49,58,59), cols=c(10), stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="top",borderStyle="medium"),rows=c(8,18),cols=c(7:9),gridExpand=TRUE,stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="top",borderStyle="medium"),rows=c(29,39),cols=c(6:9),gridExpand=TRUE,stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="top",borderStyle="medium"),rows=c(50,60),cols=c(4:9),gridExpand=TRUE,stack=TRUE)
+      
+      addStyle(wb, "Exotic Beta - TSM", createStyle(numFmt="0.00",fgFill="#CFE8CA",border="topbottomleftright",borderStyle="medium"),
+               rows=c(10,20,31,41,52,62),cols=c(10),stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(textDecoration="bold"),
+               rows=c(10,20,31,41,52,62)-1,cols=c(10),stack=TRUE)
+      
+      addStyle(wb, "Exotic Beta - TSM", createStyle(fgFill="#DAEEF3"),rows=c(3:5,13:15), cols=c(6), stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(fgFill="#DAEEF3"),rows=c(24:26,34:36), cols=c(5), stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(fgFill="#DAEEF3"),rows=c(45:47,55:57), cols=c(3), stack=TRUE)
+      
+      addStyle(wb, "Exotic Beta - TSM", createStyle(textDecoration="bold"),rows=c(2,12,23,33,44,54),cols=c(2:10),gridExpand=TRUE,stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(fgFill="#CFE8CA"),rows=c(3:5,13:15,24:26,34:36,45:47,55:57),cols=c(10),stack=TRUE)
+      
+      addStyle(wb, "Exotic Beta - TSM", createStyle(fgFill="#FFFFFF"),rows=c(3:7,13:17),cols=c(7:9),gridExpand=TRUE,stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(fgFill="#FFFFFF"),rows=c(24:28,34:38),cols=c(6:9),gridExpand=TRUE,stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(fgFill="#FFFFFF"),rows=c(45:49,55:59),cols=c(4:9),gridExpand=TRUE,stack=TRUE)
+      
+      addStyle(wb, "Exotic Beta - TSM", createStyle(textDecoration="bold",border="topbottomleftright",borderStyle="medium",fgFill="#E17414"),
+               rows=c(2,12,23,33,44,54),cols=2,stack=TRUE)
+      
+      writeData(wb, "Exotic Beta - TSM", Tab.beta[[1]], startRow=2, startCol=5, rowNames=TRUE)
+      writeData(wb, "Exotic Beta - TSM", Tab.beta[[2]], startRow=12, startCol=5, rowNames=TRUE)
+      writeData(wb, "Exotic Beta - TSM", Tab.beta[[3]], startRow=23, startCol=4, rowNames=TRUE)
+      writeData(wb, "Exotic Beta - TSM", Tab.beta[[4]], startRow=33, startCol=4, rowNames=TRUE)
+      writeData(wb, "Exotic Beta - TSM", Tab.beta[[5]], startRow=44, startCol=2, rowNames=TRUE)
+      writeData(wb, "Exotic Beta - TSM", Tab.beta[[6]], startRow=54, startCol=2, rowNames=TRUE)
+      
+      addStyle(wb, "Exotic Beta - TSM", createStyle(fgFill="#CFE8CA",border="bottomleftright",borderStyle="thin"),
+               cols=10,rows=c(6,7,16,17,27,28,37,38,48,49,58,59),stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="leftright",borderStyle="medium"),
+               cols=10,rows=c(6,7,16,17,27,28,37,38,48,49,58,59),stack=TRUE)
+      addStyle(wb, "Exotic Beta - TSM", createStyle(border="bottom",borderStyle="medium"),
+               cols=10,rows=c(7,17,28,38,49,59),stack=TRUE)
+      
+      ktcnt = 0
+      for (ktc in c(10,20,31,41,52,62)) {
+        ktcnt = ktcnt + 1
+        writeData(wb, "Exotic Beta - TSM", as.data.frame("Residual Sharpe"),colNames=FALSE,startRow=ktc-1, startCol=10)
+        if (ktcnt<=2) writeData(wb, "Exotic Beta - TSM", as.data.frame(c("Coeff","T-stat")),colNames=FALSE,startRow=ktc-4, startCol=6)
+        else if (ktcnt<=4) writeData(wb, "Exotic Beta - TSM", as.data.frame(c("Coeff","T-stat")),colNames=FALSE,startRow=ktc-4, startCol=5)
+        else writeData(wb, "Exotic Beta - TSM", as.data.frame(c("Coeff","T-stat")),colNames=FALSE,startRow=ktc-4, startCol=3)
+        if (ktcnt%%2!=0) writeData(wb, "Exotic Beta - TSM", as.data.frame(f3name),colNames=FALSE,startRow=ktc-8, startCol=2)
+        else writeData(wb, "Exotic Beta - TSM", as.data.frame(ben.shortname),colNames=FALSE,startRow=ktc-8, startCol=2)
+      }
+      
+      insertloc = c(2,12,23,33,44,54)
+      for (ktc in 1:6) insertImage(wb, "Exotic Beta - TSM", pngName7[[ktc]], width=pdim7[1]*2/3, height=pdim7[2], startRow=insertloc[ktc], startCol=12)
+    }
+    
+    print("Page-10")
+    if ((9.70>0)&(betaDumm==1)) {
+      addWorksheet(wb, "Exotic Beta - MA.X")
+      setColWidths(wb, "Exotic Beta - MA.X", cols=c(1,11), widths=1)
+      setColWidths(wb, "Exotic Beta - MA.X", cols=10, widths=13.11)
+      setColWidths(wb, "Exotic Beta - MA.X", cols=2:9, widths=10.44)
+      setRowHeights(wb, "Exotic Beta - MA.X", rows=c(1:63), heights=12.5)
+      setRowHeights(wb, "Exotic Beta - MA.X", rows=c(8,18,29,39,50,60), heights=2)
+      setRowHeights(wb, "Exotic Beta - MA.X", rows=c(11,21,32,42,43,53,63), heights=7.5)
+      setRowHeights(wb, "Exotic Beta - MA.X", rows=c(1,22,43), heights=18.5)
+      
+      for (ktc in c(1,22,43)) mergeCells(wb, "Exotic Beta - MA.X", cols=2:19, rows=ktc)
+      addStyle(wb,"Exotic Beta - MA.X",createStyle(fgFill="#808080"),cols=1,rows=c(1,22,43),stack=TRUE)
+      addStyle(wb,"Exotic Beta - MA.X",createStyle(halign="left",valign="center",fontColour="#FFFFFF",
+                                                   textDecoration="bold",fgFill="#808080",fontSize=12.5),cols=2,rows=c(1,22,43),stack=TRUE)
+      writeData(wb,"Exotic Beta - MA.X",as.data.frame(paste0("Regressions against Moving Average Crossover by Time Frame ",regDate[1], 
+                                                             " to ", regDate[2]," (Res Str,",tag_ret,")")),startCol=2,startRow=1,colNames=FALSE)
+      writeData(wb,"Exotic Beta - MA.X",as.data.frame(paste0("Regressions against Long-term Moving Average Crossover by Sectors ",regDate[1], 
+                                                             " to ", regDate[2]," (Res Str,",tag_ret,")")),startCol=2,startRow=22,colNames=FALSE)
+      writeData(wb,"Exotic Beta - MA.X",as.data.frame(paste0("Regressions against Factors w MA.X/Long ",regDate[1], 
+                                                             " to ", regDate[2]," (Res Str,",tag_ret,")")),startCol=2,startRow=43,colNames=FALSE)
+      
+      for (ktc in 1:11) addStyle(wb, "Exotic Beta - MA.X", createStyle(fgFill="#F2F2F2",halign="center"), cols=ktc, rows=c(2:21,23:42,44:63), stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(numFmt="PERCENTAGE"), cols=2:10, 
+               rows=c(2:5,10,13:15,20,24:26,31,34:36,41,45:47,52,55:57,62), gridExpand=TRUE, stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(numFmt="0.00"), cols=2:10, 
+               rows=c(6,7,9,16,17,19,27,28,30,37,38,40,48,49,51,58,59,61),gridExpand=TRUE, stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="leftrighttopbottom",borderStyle="thin"),
+               rows=c(3:5,13:15), cols=6:10, gridExpand=TRUE, stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="leftrighttopbottom",borderStyle="thin"),
+               rows=c(6,7,16,17), cols=7:9, gridExpand=TRUE, stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="leftrighttopbottom",borderStyle="thin"),
+               rows=c(24:26,34:36), cols=5:10, gridExpand=TRUE, stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="leftrighttopbottom",borderStyle="thin"),
+               rows=c(27,28,37,38), cols=6:9, gridExpand=TRUE, stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="leftrighttopbottom",borderStyle="thin"),
+               rows=c(45:47,55:57), cols=3:10, gridExpand=TRUE, stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="leftrighttopbottom",borderStyle="thin"),
+               rows=c(48,49,58,59), cols=4:9, gridExpand=TRUE, stack=TRUE)
+      
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="bottom",borderStyle="medium"),
+               rows=c(2,5,12,15), cols=6:10, gridExpand=TRUE, stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="bottom",borderStyle="medium"),
+               rows=c(23,26,33,36), cols=5:10, gridExpand=TRUE, stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="bottom",borderStyle="medium"),
+               rows=c(44,47,54,57), cols=3:10, gridExpand=TRUE, stack=TRUE)
+      
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="leftright",borderStyle="medium"),
+               rows=c(3:5,13:15), cols=c(6,10), gridExpand=TRUE, stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="leftright",borderStyle="medium"),
+               rows=c(24:26,34:36), cols=c(5,10), gridExpand=TRUE, stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="leftright",borderStyle="medium"),
+               rows=c(45:47,55:57), cols=c(3,10), gridExpand=TRUE, stack=TRUE)
+      
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(valign="center",border="right",borderStyle="medium", halign="right",textDecoration="bold"),
+               rows=c(3:5,9,10,13:15,19,20), cols=c(5), stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(valign="center",border="right",borderStyle="medium", halign="right",textDecoration="bold"),
+               rows=c(24:26,30,31,34:36,40,41), cols=c(4), stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(valign="center",border="right",borderStyle="medium", halign="right",textDecoration="bold"),
+               rows=c(45:47,51,52,55:57,61,62), cols=c(2),  stack=TRUE)
+      
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="right",borderStyle="medium", halign="right",textDecoration="bold"),
+               rows=c(6,7,16,17), cols=c(6), stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="right",borderStyle="medium", halign="right",textDecoration="bold"),
+               rows=c(27,28,37,38), cols=c(5), stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="right",borderStyle="medium", halign="right",textDecoration="bold"),
+               rows=c(48,49,58,59), cols=c(3), stack=TRUE)
+      
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="topright",borderStyle="medium",fgFill="#FFFFFF"),rows=c(9,19), cols=c(6), stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="topright",borderStyle="medium",fgFill="#FFFFFF"),rows=c(30,40), cols=c(5), stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="topright",borderStyle="medium",fgFill="#FFFFFF"),rows=c(51,61), cols=c(3), stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="bottom",borderStyle="thin"),rows=c(9,19), cols=c(6), stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="bottom",borderStyle="thin"),rows=c(30,40), cols=c(5), stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="bottom",borderStyle="thin"),rows=c(51,61), cols=c(3), stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="bottomright",borderStyle="medium",fgFill="#FFFFFF"),rows=c(10,20), cols=c(6), stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="bottomright",borderStyle="medium",fgFill="#FFFFFF"),rows=c(31,41), cols=c(5), stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="bottomright",borderStyle="medium",fgFill="#FFFFFF"),rows=c(52,62), cols=c(3), stack=TRUE)
+      
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="left",borderStyle="medium"),
+               rows=c(6,7,16,17,27,28,37,38,48,49,58,59), cols=c(10), stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="top",borderStyle="medium"),rows=c(8,18),cols=c(7:9),gridExpand=TRUE,stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="top",borderStyle="medium"),rows=c(29,39),cols=c(6:9),gridExpand=TRUE,stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="top",borderStyle="medium"),rows=c(50,60),cols=c(4:9),gridExpand=TRUE,stack=TRUE)
+      
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(numFmt="0.00",fgFill="#CFE8CA",border="topbottomleftright",borderStyle="medium"),
+               rows=c(10,20,31,41,52,62),cols=c(10),stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(textDecoration="bold"),
+               rows=c(10,20,31,41,52,62)-1,cols=c(10),stack=TRUE)
+      
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(fgFill="#DAEEF3"),rows=c(3:5,13:15), cols=c(6), stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(fgFill="#DAEEF3"),rows=c(24:26,34:36), cols=c(5), stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(fgFill="#DAEEF3"),rows=c(45:47,55:57), cols=c(3), stack=TRUE)
+      
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(textDecoration="bold"),rows=c(2,12,23,33,44,54),cols=c(2:10),gridExpand=TRUE,stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(fgFill="#CFE8CA"),rows=c(3:5,13:15,24:26,34:36,45:47,55:57),cols=c(10),stack=TRUE)
+      
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(fgFill="#FFFFFF"),rows=c(3:7,13:17),cols=c(7:9),gridExpand=TRUE,stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(fgFill="#FFFFFF"),rows=c(24:28,34:38),cols=c(6:9),gridExpand=TRUE,stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(fgFill="#FFFFFF"),rows=c(45:49,55:59),cols=c(4:9),gridExpand=TRUE,stack=TRUE)
+      
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(textDecoration="bold",border="topbottomleftright",borderStyle="medium",fgFill="#E17414"),
+               rows=c(2,12,23,33,44,54),cols=2,stack=TRUE)
+      
+      writeData(wb, "Exotic Beta - MA.X", Tab.beta2[[1]], startRow=2, startCol=5, rowNames=TRUE)
+      writeData(wb, "Exotic Beta - MA.X", Tab.beta2[[2]], startRow=12, startCol=5, rowNames=TRUE)
+      writeData(wb, "Exotic Beta - MA.X", Tab.beta2[[3]], startRow=23, startCol=4, rowNames=TRUE)
+      writeData(wb, "Exotic Beta - MA.X", Tab.beta2[[4]], startRow=33, startCol=4, rowNames=TRUE)
+      writeData(wb, "Exotic Beta - MA.X", Tab.beta2[[5]], startRow=44, startCol=2, rowNames=TRUE)
+      writeData(wb, "Exotic Beta - MA.X", Tab.beta2[[6]], startRow=54, startCol=2, rowNames=TRUE)
+      
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(fgFill="#CFE8CA",border="bottomleftright",borderStyle="thin"),
+               cols=10,rows=c(6,7,16,17,27,28,37,38,48,49,58,59),stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="leftright",borderStyle="medium"),
+               cols=10,rows=c(6,7,16,17,27,28,37,38,48,49,58,59),stack=TRUE)
+      addStyle(wb, "Exotic Beta - MA.X", createStyle(border="bottom",borderStyle="medium"),
+               cols=10,rows=c(7,17,28,38,49,59),stack=TRUE)
+      
+      ktcnt = 0
+      for (ktc in c(10,20,31,41,52,62)) {
+        ktcnt = ktcnt + 1
+        writeData(wb, "Exotic Beta - MA.X", as.data.frame("Residual Sharpe"),colNames=FALSE,startRow=ktc-1, startCol=10)
+        if (ktcnt<=2) writeData(wb, "Exotic Beta - MA.X", as.data.frame(c("Coeff","T-stat")),colNames=FALSE,startRow=ktc-4, startCol=6)
+        else if (ktcnt<=4) writeData(wb, "Exotic Beta - MA.X", as.data.frame(c("Coeff","T-stat")),colNames=FALSE,startRow=ktc-4, startCol=5)
+        else writeData(wb, "Exotic Beta - MA.X", as.data.frame(c("Coeff","T-stat")),colNames=FALSE,startRow=ktc-4, startCol=3)
+        if (ktcnt%%2!=0) writeData(wb, "Exotic Beta - MA.X", as.data.frame(f3name),colNames=FALSE,startRow=ktc-8, startCol=2)
+        else writeData(wb, "Exotic Beta - MA.X", as.data.frame(ben.shortname),colNames=FALSE,startRow=ktc-8, startCol=2)
+      }
+      
+      insertloc = c(2,12,23,33,44,54)
+      for (ktc in 1:6) insertImage(wb, "Exotic Beta - MA.X", pngName72[[ktc]], width=pdim7[1]*2/3, height=pdim7[2], startRow=insertloc[ktc], startCol=12)
+    }
+    
+    # Page Setup
+    if (10.0>0) {
+      showGridLines(wb, "General")
+      if (ncol(infoTab)==1) {
+        pageSetup(wb, "General", scale=52, paperSize=1, fitToWidth=TRUE, fitToHeight=TRUE, left=0, right=0, top=0, bottom=0, header=0, footer=0)
+      } else if (ncol(infoTab)==2) {
+        pageSetup(wb, "General", scale=51, paperSize=1, fitToWidth=TRUE, fitToHeight=TRUE, left=0, right=0, top=0, bottom=0, header=0, footer=0)
+      } else if (ncol(infoTab)==3) {
+        pageSetup(wb, "General", scale=49, paperSize=1, fitToWidth=TRUE, fitToHeight=TRUE, left=0, right=0, top=0, bottom=0, header=0, footer=0)
+      } else if (ncol(infoTab)==4) {
+        pageSetup(wb, "General", scale=46, paperSize=1, fitToWidth=TRUE, fitToHeight=TRUE, left=0, right=0, top=0, bottom=0, header=0, footer=0)
+      }
+      
+      showGridLines(wb, "Analytic")
+      pageSetup(wb, "Analytic", scale=76, paperSize=1, fitToWidth=TRUE, fitToHeight=TRUE, left=0, right=0, top=0, bottom=0, header=0, footer=0)
+      showGridLines(wb, "vs Bench")
+      pageSetup(wb, "vs Bench", scale=69, paperSize=1, fitToWidth=TRUE, fitToHeight=TRUE, left=0, right=0, top=0, bottom=0, header=0, footer=0)
+      showGridLines(wb, "stdevs")
+      pageSetup(wb, "stdevs", orientation="landscape", scale=77, paperSize=1, fitToWidth=TRUE, fitToHeight=TRUE, left=0, right=0, top=0, bottom=0, header=0, footer=0)
+      if (netAlt) {
+        showGridLines(wb, "stdevs contd")
+        pageSetup(wb, "stdevs contd", orientation="landscape", scale=77, paperSize=1, fitToWidth=TRUE, fitToHeight=TRUE, left=0, right=0, top=0, bottom=0, header=0, footer=0)
+      }
+      showGridLines(wb, "attr")
+      pageSetup(wb, "attr", orientation="landscape", scale=83, paperSize=1, fitToWidth=TRUE, fitToHeight=TRUE, left=0, right=0, top=0, bottom=0, header=0, footer=0)
+      showGridLines(wb, "vs idx")
+      pageSetup(wb, "vs idx", orientation="landscape", scale=76, paperSize=1, fitToWidth=TRUE, fitToHeight=TRUE, left=0, right=0, top=0, bottom=0, header=0, footer=0)
+      showGridLines(wb, "vs peer")  
+      pageSetup(wb, "vs peer", orientation="landscape", scale=76, paperSize=1, fitToWidth=TRUE, fitToHeight=TRUE, left=0, right=0, top=0, bottom=0, header=0, footer=0) 
+      if (betaDumm==1) {
+        showGridLines(wb, "Exotic Beta - TSM")  
+        pageSetup(wb, "Exotic Beta - TSM", orientation="landscape", scale=76, paperSize=1, fitToWidth=TRUE, fitToHeight=TRUE, left=0, right=0, top=0, bottom=0, header=0, footer=0) 
+        showGridLines(wb, "Exotic Beta - MA.X")  
+        pageSetup(wb, "Exotic Beta - MA.X", orientation="landscape", scale=76, paperSize=1, fitToWidth=TRUE, fitToHeight=TRUE, left=0, right=0, top=0, bottom=0, header=0, footer=0) 
+      }
+    }
+    
+    # output Data
+    if (5.10>0) {
+      retDates = index(na.exclude(ret_nres[,i]))
+ 
+      addWorksheet(wb, "General data")
+      writeData(wb, "General data", as.data.frame(f1name), startCol=1, startRow=1, colNames=FALSE, rowNames=FALSE)
+      writeData(wb, "General data", mret_nres_xtab, startCol=2, startRow=3, colNames=TRUE, rowNames=FALSE)
+      writeData(wb, "General data", as.numeric(rownames(mret_nres_xtab)), startCol=1, startRow=4, colNames=FALSE, rowNames=FALSE)
+      row1 = nrow(mret_nres_xtab)+6
+      data1 = remove1stNA(cbind(ret_gres[,i], ret_nres[,i], rollsd, dd_nres))
+      colnames(data1) = c("Research String","Net Research String","Cumulative Ret","Roll 21d Stdev","Roll 252d Stdev",
+                          "Roll 756d Stdev","EMAV","Drawdown","Roll 1yr Vol x1","ROll 1yr Voll x2","EMAV 1x","EMAV 2x")
+      writeData(wb, "General data", data.frame(date=index(data1),data1),startRow=row1,startCol=1,colNames=TRUE,rowNames=FALSE)
+      data1b = aumList[[i]]
+      writeData(wb, "General data", data.frame(date=index(data1b),data1b),startCol=15, startRow=row1,colNames=TRUE,rowNames=FALSE)
+      
+      addWorksheet(wb, "Analytic data")
+      writeData(wb, "Analytic data", anaTab, rowNames=TRUE, startCol=2)
+      writeData(wb, "Analytic data", rankTab, startCol=7)
+      writeData(wb, "Analytic data", expTab1, startCol=3, startRow=30, colNames=FALSE, rowNames=FALSE)
+      writeData(wb, "Analytic data", expTab2, startCol=9, startRow=27, colNames=FALSE, rowNames=FALSE)
+      writeData(wb, "Analytic data", as.data.frame(t(c("At Invst","Expect","Current"))),startCol=3,startRow=27,colNames=FALSE,rowNames=FALSE)
+      writeData(wb, "Analytic data", as.data.frame(c("5-yr Info Ratio")),startCol=3,startRow=29,colNames=FALSE,rowNames=FALSE)
+      writeData(wb, "Analytic data", as.data.frame(c("Mean Return")),startCol=3,startRow=32,colNames=FALSE,rowNames=FALSE)
+      writeData(wb, "Analytic data", as.data.frame(c("Daily","Monthly","Quarterly","LTD")),startCol=2,startRow=33,colNames=FALSE,rowNames=FALSE)
+      writeData(wb, "Analytic data", data.frame(t(Thre.colname)),startCol=3,startRow=42,colNames=FALSE,rowNames=FALSE)
+      writeData(wb, "Analytic data", data.frame(Thre.rowname),startCol=2,startRow=43,colNames=FALSE,rowNames=FALSE)
+      writeData(wb, "Analytic data", ThresholdsTab1,startCol=3,startRow=43,colNames=FALSE,rowNames=FALSE)
+      writeData(wb, "Analytic data", ThresholdsTab2,startCol=3,startRow=68,colNames=FALSE,rowNames=FALSE)
+      
+      addWorksheet(wb, "vs Bench data")
+      data3 = cbind(rollret_dif$value+rollret_dif$val2,rolldif2.dta[,2:7],rollSharpe[,2:4],data.frame(rollCorr))
+      data3 = data.frame(date=rownames(data3),data3,stringsAsFactors=FALSE)
+      fillBlank1 = data.frame(date=as.character(retDates[which(retDates<=as.Date(data3$date[1]))]))
+      fillBlank1[,2:ncol(data3)] = NA
+      colnames(fillBlank1) = colnames(data3)   
+      fillBlank1$v4 = data3$v4[1]
+      fillBlank1$v5 = data3$v5[1]
+      fillBlank1$v6 = data3$v6[1]
+      data3 = rbind(fillBlank1, data3)
+      colnames(data3) = c("date","Over/Under Perf Bench",
+                          "Over/Under Perf Bench 1yr","Over/Under Perf Bench 3yr","Over/Under Perf Bench 5yr",
+                          "Threshold 1y","Threshold 3y","Threshold 5y",
+                          "Roll Sharpe 1y","Roll Sharpe 1y","Roll Sharpe 1y",
+                          "Roll Corr to Bench 1y","Roll Corr to Bench 3y","Roll Corr to Bench 5y")
+      writeData(wb, "vs Bench data", data3, colNames=TRUE, rowNames=FALSE)
+      
+      addWorksheet(wb, "stdev data")
+      b42agg = rbind(b4a, b4b)
+      stdevsProb1 = unique(b4$variable)
+      for (b42Iter in 1:length(stdevsProb1)) {
+        b42aggTmp = b42agg[which(b42agg$variable==stdevsProb1[b42Iter]),1:(ncol(b42agg)-1)]
+        if (as.Date(b42aggTmp$date[1])>retDates[1]) {
+          fillBlankTmp = data.frame(variable=stdevsProb1[b42Iter],
+                                    date=retDates[which(retDates<as.Date(b42aggTmp$date[1]))],
+                                    value=NA, n2sd=b42aggTmp$n2sd[1], n1sd=b42aggTmp$n1sd[1],
+                                    mean=b42aggTmp$mean[1],p1sd=b42aggTmp$p1sd[1],
+                                    p2sd=b42aggTmp$p2sd[1],stringsAsFactors=FALSE)
+          b42aggTmp = rbind(fillBlankTmp, b42aggTmp)
+        }
+        writeData(wb, "stdev data", b42aggTmp,startCol=9*b42Iter-8, rowNames=FALSE)
+      }
+      
+      addWorksheet(wb, "stdev contd data")
+      if (netAlt) {
+        b42agg = rbind(b42a, b42b)
+        stdevsProb1 = unique(b42$variable)
+        for (b42Iter in 1:length(stdevsProb1)) {
+          b42aggTmp = b42agg[which(b42agg$variable==stdevsProb1[b42Iter]),1:(ncol(b42agg)-1)]
+          if (as.Date(b42aggTmp$date[1])>retDates[1]) {
+            fillBlankTmp = data.frame(variable=stdevsProb1[b42Iter],
+                                      date=retDates[which(retDates<as.Date(b42aggTmp$date[1]))],
+                                      value=NA, n2sd=b42aggTmp$n2sd[1], n1sd=b42aggTmp$n1sd[1],
+                                      mean=b42aggTmp$mean[1],p1sd=b42aggTmp$p1sd[1],
+                                      p2sd=b42aggTmp$p2sd[1],stringsAsFactors=FALSE)
+            b42aggTmp = rbind(fillBlankTmp, b42aggTmp)
+          }
+          writeData(wb, "stdev contd data", b42aggTmp,startCol=9*b42Iter-8, rowNames=FALSE)
+        }
+      }
+      
+      addWorksheet(wb, "attr data")
+      writeData(wb, "attr data", pl_cta[[i]], rowNames=FALSE)
+      data5b = var_cta[[i]]
+      data5b$StatementDate = as.Date(data5b$StatementDate,format="%m/%d/%y")
+      data5b = with(data5b,  data5b[order(data5b$SectorName,data5b$StatementDate) , ])
+      writeData(wb, "attr data", data5b, startCol=5 ,rowNames=FALSE)
+      data5 = data.frame(date=index(marg_cta[[i]]), Margin.to.Equity=marg_cta[[i]])
+      writeData(wb, "attr data",data5, startCol=9 ,rowNames=FALSE)
+      if (sum(!is.na(tes[[i]]))>0) { data5c = data.frame(date=index(tes[[i]]),TrkErr=tes[[i]][,1],TrkErr_MovAvg_12m=tes[[i]][,2])
+      } else {data5c = data.frame("NA")}
+      writeData(wb, "attr data", data5c, startCol=12)
+      
+      
+      addWorksheet(wb, "vs idx data")
+      writeData(wb, "vs idx data", data.frame(rep(c( rownames(pps[[1]])[1:4],NA,NA,NA),4)), 
+                startCol=1, startRow=3, colNames=FALSE)
+      writeData(wb, "vs idx data", pps[[1]], startCol=2, startRow=2)
+      tags = c("raw Returns used","vol Adj Returns used")
+      for (vsIter in 2:3) {
+        tmpVs = pps[[vsIter]]
+        varfs = unique(tmpVs$varf)
+        for (vsj in 1:length(varfs)) {
+          tmpVsj = tmpVs[which(tmpVs$varf==varfs[vsj]),]
+          if (tmpVsj$date[1]>retDates[1]) {
+            fillBlank2 = data.frame(date=retDates[which(retDates<tmpVsj$date[1])],
+                                    v1=NA, v2=NA, v3=NA, v4=NA,
+                                    varf=varfs[vsj],stringsAsFactors=FALSE)
+            colnames(fillBlank2) = colnames(tmpVsj)
+            tmpVsj = rbind(fillBlank2,tmpVsj)
+          }
+          writeData(wb, "vs idx data", as.data.frame(tags[vsIter-1]), startCol=2+(ncol(tmpVs)+1)*vsj+2+40*(vsIter-2), colNames=FALSE)
+          writeData(wb, "vs idx data", tmpVsj, startRow=2, startCol=2+7*vsj+2+40*(vsIter-2))
+        }
+      }
+      
+      addWorksheet(wb, "vs peer data")
+      writeData(wb, "vs peer data", data.frame(rep(c(rownames(pps2[[1]])[1:peerNum],rep(NA,9-peerNum)),4)), 
+                startCol=1, startRow=3, colNames=FALSE)
+      writeData(wb, "vs peer data", pps2[[1]], startCol=2, startRow=2)
+      iniPeerCol = c(NA,11,11+5*(peerNum+4))
+      for (vsIter in 2:3) {
+        tmpVs = pps2[[vsIter]]
+        varfs = unique(tmpVs$varf)
+        for (vsj in 1:length(varfs)) {
+          tmpVsj = tmpVs[which(tmpVs$varf==varfs[vsj]),]
+          if (tmpVsj$date[1]>retDates[1]) {
+            fillBlank2 = data.frame(date=retDates[which(retDates<tmpVsj$date[1])],
+                                    data.frame(t(rep(NA,1,ncol(tmpVsj)-2))),
+                                    varf=varfs[vsj],stringsAsFactors=FALSE)
+            colnames(fillBlank2) = colnames(tmpVsj)
+            tmpVsj = rbind(fillBlank2,tmpVsj)
+          }
+          writeData(wb, "vs peer data", as.data.frame(tags[vsIter-1]), 
+                    startCol=iniPeerCol[vsIter]+(vsj-1)*(peerNum+4)+1, colNames=FALSE)
+          writeData(wb, "vs peer data", tmpVsj, startRow=2, startCol=iniPeerCol[vsIter]+(vsj-1)*(peerNum+4))
+        }
+      }
+      
+      if ((9.70>0)&(betaDumm==1)) {
+        addWorksheet(wb, "Exotic Beta - TSM data")
+        setColWidths(wb, "Exotic Beta - TSM data", cols=c(1,11), widths=1)
+        setColWidths(wb, "Exotic Beta - TSM data", cols=10, widths=13.11)
+        setColWidths(wb, "Exotic Beta - TSM data", cols=2:9, widths=10.44)
+        setRowHeights(wb, "Exotic Beta - TSM data", rows=c(1:63), heights=12.5)
+        setRowHeights(wb, "Exotic Beta - TSM data", rows=c(8,18,29,39,50,60), heights=2)
+        setRowHeights(wb, "Exotic Beta - TSM data", rows=c(11,21,32,42,43,53,63), heights=7.5)
+        setRowHeights(wb, "Exotic Beta - TSM data", rows=c(1,22,43), heights=18.5)
+        
+        for (ktc in c(1,22,43)) mergeCells(wb, "Exotic Beta - TSM data", cols=2:19, rows=ktc)
+        writeData(wb,"Exotic Beta - TSM data",as.data.frame(paste0("Regressions against Time-Series Momentum by Time Frame ",regDate[1], 
+                                                                   " to ", regDate[2]," (Net Res Str,",tag_ret,")")),startCol=2,startRow=1,colNames=FALSE)
+        writeData(wb,"Exotic Beta - TSM data",as.data.frame(paste0("Regressions against 12-month Time-Series Momentum by Sectors ",regDate[1], 
+                                                                   " to ", regDate[2]," (Net Res Str,",tag_ret,")")),startCol=2,startRow=22,colNames=FALSE)
+        writeData(wb,"Exotic Beta - TSM data",as.data.frame(paste0("Regressions against Factors w TSM12M ",regDate[1], 
+                                                                   " to ", regDate[2]," (Net Res Str,",tag_ret,")")),startCol=2,startRow=43,colNames=FALSE)
+        
+        writeData(wb, "Exotic Beta - TSM data", Tab.beta[[1]], startRow=2, startCol=5, rowNames=TRUE)
+        writeData(wb, "Exotic Beta - TSM data", Tab.beta[[2]], startRow=12, startCol=5, rowNames=TRUE)
+        writeData(wb, "Exotic Beta - TSM data", Tab.beta[[3]], startRow=23, startCol=4, rowNames=TRUE)
+        writeData(wb, "Exotic Beta - TSM data", Tab.beta[[4]], startRow=33, startCol=4, rowNames=TRUE)
+        writeData(wb, "Exotic Beta - TSM data", Tab.beta[[5]], startRow=44, startCol=2, rowNames=TRUE)
+        writeData(wb, "Exotic Beta - TSM data", Tab.beta[[6]], startRow=54, startCol=2, rowNames=TRUE)
+        
+      }
+      if ((9.70>0)&(betaDumm==1)) {
+        addWorksheet(wb, "Exotic Beta - MA.X data")
+        setColWidths(wb, "Exotic Beta - MA.X data", cols=c(1,11), widths=1)
+        setColWidths(wb, "Exotic Beta - MA.X data", cols=10, widths=13.11)
+        setColWidths(wb, "Exotic Beta - MA.X data", cols=2:9, widths=10.44)
+        setRowHeights(wb, "Exotic Beta - MA.X data", rows=c(1:63), heights=12.5)
+        setRowHeights(wb, "Exotic Beta - MA.X data", rows=c(8,18,29,39,50,60), heights=2)
+        setRowHeights(wb, "Exotic Beta - MA.X data", rows=c(11,21,32,42,43,53,63), heights=7.5)
+        setRowHeights(wb, "Exotic Beta - MA.X data", rows=c(1,22,43), heights=18.5)
+        
+        for (ktc in c(1,22,43)) mergeCells(wb, "Exotic Beta - MA.X data", cols=2:19, rows=ktc)
+        writeData(wb,"Exotic Beta - MA.X data",as.data.frame(paste0("Regressions against Moving Average Crossover by Time Frame ",regDate[1], 
+                                                                    " to ", regDate[2]," (Net Res Str,",tag_ret,")")),startCol=2,startRow=1,colNames=FALSE)
+        writeData(wb,"Exotic Beta - MA.X data",as.data.frame(paste0("Regressions against Long-term Moving Average Crossover by Sectors ",regDate[1], 
+                                                                    " to ", regDate[2]," (Net Res Str,",tag_ret,")")),startCol=2,startRow=22,colNames=FALSE)
+        writeData(wb,"Exotic Beta - MA.X data",as.data.frame(paste0("Regressions against Factors w MA.X/Long ",regDate[1], 
+                                                                    " to ", regDate[2]," (Net Res Str,",tag_ret,")")),startCol=2,startRow=43,colNames=FALSE)
+        
+        writeData(wb, "Exotic Beta - MA.X data", Tab.beta2[[1]], startRow=2, startCol=5, rowNames=TRUE)
+        writeData(wb, "Exotic Beta - MA.X data", Tab.beta2[[2]], startRow=12, startCol=5, rowNames=TRUE)
+        writeData(wb, "Exotic Beta - MA.X data", Tab.beta2[[3]], startRow=23, startCol=4, rowNames=TRUE)
+        writeData(wb, "Exotic Beta - MA.X data", Tab.beta2[[4]], startRow=33, startCol=4, rowNames=TRUE)
+        writeData(wb, "Exotic Beta - MA.X data", Tab.beta2[[5]], startRow=44, startCol=2, rowNames=TRUE)
+        writeData(wb, "Exotic Beta - MA.X data", Tab.beta2[[6]], startRow=54, startCol=2, rowNames=TRUE)
+        
+        ktcnt = 0
+        for (ktc in c(10,20,31,41,52,62)) {
+          ktcnt = ktcnt + 1
+          writeData(wb, "Exotic Beta - MA.X data", as.data.frame("Residual Sharpe"),colNames=FALSE,startRow=ktc-1, startCol=10)
+          if (ktcnt<=2) writeData(wb, "Exotic Beta - MA.X data", as.data.frame(c("Coeff","T-stat")),colNames=FALSE,startRow=ktc-4, startCol=6)
+          else if (ktcnt<=4) writeData(wb, "Exotic Beta - MA.X data", as.data.frame(c("Coeff","T-stat")),colNames=FALSE,startRow=ktc-4, startCol=5)
+          else writeData(wb, "Exotic Beta - MA.X data", as.data.frame(c("Coeff","T-stat")),colNames=FALSE,startRow=ktc-4, startCol=3)
+          if (ktcnt%%2!=0) writeData(wb, "Exotic Beta - MA.X data", as.data.frame(f3name),colNames=FALSE,startRow=ktc-8, startCol=2)
+          else writeData(wb, "Exotic Beta - MA.X data", as.data.frame(colnames(ben)),colNames=FALSE,startRow=ktc-8, startCol=2)
+        }
+      }
+      
+      # saveWorkbook(wb, paste0(getwd(),"\\",f2name," data.xlsx"), overwrite=TRUE)
+      # shell.exec(paste0(getwd(),"\\",f2name," data.xlsx"))
+    }
+    
+    xlsname <- paste0("R:\\FundSelectionTool\\Quant Pack Reports\\",endDate,"\\",f2name,".xlsx")
+    print(paste0(i,"-",xlsname))
+    saveWorkbook(wb, xlsname, overwrite=TRUE)
+    # shell.exec(xlsname)
